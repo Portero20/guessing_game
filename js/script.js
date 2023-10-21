@@ -3,14 +3,17 @@ function generateRandomNumber() {
     return Math.floor(Math.random() * 100) + 1;
 }
 
-let targetNumber = generateRandomNumber();
-let attempts = 0;
-
 document.addEventListener('DOMContentLoaded', function () {
     const guessButton = document.getElementById('guessButton');
     const resetButton = document.getElementById('resetButton');
     const guessInput = document.getElementById('guessInput');
     const message = document.getElementById('message');
+    const attemptsParagraph = document.getElementById('attemptsCount');
+    const winAudio = document.getElementById('winAudio');
+    const loseAudio = document.getElementById('loseAudio');
+
+    let targetNumber = generateRandomNumber();
+    let attempts = 0;
 
     guessButton.addEventListener('click', checkGuess);
     resetButton.addEventListener('click', resetGame);
@@ -20,6 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (isNaN(guess) || guess < 1 || guess > 100) {
             message.textContent = 'Ingresa un número válido entre 1 y 100.';
+            attemptsParagraph.textContent = `Intentos: ${attempts}`;
         } else {
             attempts++;
             if (guess < targetNumber) {
@@ -31,10 +35,29 @@ document.addEventListener('DOMContentLoaded', function () {
                 guessInput.disabled = true;
                 guessButton.disabled = true;
                 resetButton.disabled = false;
-            }
-        }
-    }
 
+                winAudio.play();
+            }
+
+            attemptsParagraph.textContent = `Intentos: ${attempts}`;
+
+        }
+
+        if (attempts >= 10 && guess !== targetNumber) {
+
+            message.textContent = 'Perdiste. El número era ' + targetNumber;
+            guessInput.disabled = true;
+            guessButton.disabled = true;
+            resetButton.disabled = false;
+
+            loseAudio.play()
+
+
+        }
+
+    }
+    
+    console.log(targetNumber)
     function resetGame() {
         targetNumber = generateRandomNumber();
         attempts = 0;
@@ -43,5 +66,6 @@ document.addEventListener('DOMContentLoaded', function () {
         guessButton.disabled = false;
         resetButton.disabled = true;
         message.textContent = '';
+        attemptsParagraph.textContent = 'Intentos: 0';
     }
 });
